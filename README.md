@@ -9,6 +9,10 @@ The two approaches are:
 
 - VolumeMounting the stage libs from a shared volume at deployment time.
 
+### Important Note
+Make sure to always include the selection of stage libraries you are preloading in your Control Hub Deployment as well.  This ensures that Control Hub knows what stage libraries should be present in your engine's file system.
+
+
 ### Technique #1: Creating a custom StreamSets Engine image with stage libraries included.
 
 To create your own StreamSets Engine image with stage libraries included, start by cloning  this project to a linux machine and changing to the [custom-streamsets-docker-image](custom-streamsets-docker-image) dir.
@@ -86,8 +90,12 @@ drwxrwxr-x 3 sdc  sdc  4096 Sep 19 23:11 streamsets-datacollector-jython_2_7-lib
 drwxrwxr-x 3 sdc  sdc  4096 Sep 19 23:11 streamsets-datacollector-sdc-snowflake-lib
 ```
 
+After confirming your image has the intended stage libraries, stop and delete the container. 
 
 
+### Technique #2: VolumeMount the stage libraries into your container at deployment time
+
+To VolumeMount your stage libraries into a StreamSets engine container at deployment time, you'll need some type of [Volume](https://kubernetes.io/docs/concepts/storage/volumes/#volume-types) 
 
 
 
