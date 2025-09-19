@@ -3,12 +3,9 @@
 # This script builds a custom Docker image that extends the base SDC image.
 # It downloads a set of SDC stage libs to a local directory. and then the
 # Dockerfile copies those libs into the SDC image.
-
+#
 # Prerequisites:
-
-#  - For the docker push command to work (the last line of the script), 
-#    login to your Docker Hub or other image registry before running the script. 
-
+#
 #  - Set the SDC_VERSION 
 #
 #  - Set IMAGE_NAME to your custom image name
@@ -18,6 +15,9 @@
 #    prepend "streamsets-datacollector-" and append "-lib" to each entry.
 #    You do not need to include the basic, dataformats, or dev stage libraries as these 
 #    will be included by default.
+#
+#  - For the docker push command to work (the last line of the script), 
+#    login to your Docker Hub or other image registry before running the script. 
 
 # SDC Version
 SDC_VERSION=6.3.1
@@ -26,7 +26,7 @@ SDC_VERSION=6.3.1
 IMAGE_NAME=<org>/<image>:<tag>
 
 # A space delimited list of stage libs to download
-SDC_STAGE_LIBS="apache-kafka aws bigtable google-cloud groovy_2_7 jdbc jms jython_2_7"
+SDC_STAGE_LIBS="apache-kafka aws bigtable google-cloud groovy_4.0 jdbc jms jython_2_7 sdc-snowflake"
 
 # Base URL to download SDC Stage Libs
 BASE_URL=https://archives.streamsets.com/datacollector
