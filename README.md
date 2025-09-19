@@ -95,7 +95,7 @@ After confirming your image has the intended stage libraries, stop and delete th
 
 ## Technique #2: VolumeMount the stage libraries into your container at deployment time
 
-To VolumeMount your stage libraries into a StreamSets engine container at deployment time, you'll need some type of [Volume](https://kubernetes.io/docs/concepts/storage/volumes/#volume-types) 
+To VolumeMount your stage libraries into a StreamSets engine container at deployment time, you'll need some type of [Volume](https://kubernetes.io/docs/concepts/storage/volumes/#volume-types) populated with your desired stage libraries.  Your choice of volume types depends on which k8s distribution you are using and if it is running on-prem or in a public cloud.  For this example, I'll use an [NFS Volume](https://kubernetes.io/docs/concepts/storage/volumes/#nfs)
 
 
 
