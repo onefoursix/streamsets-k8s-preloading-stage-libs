@@ -13,5 +13,11 @@ The two approaches are:
 
 To create your own StreamSets Engine image with stage libraries included, start by cloning  this project to a linux machine and changing to the [custom-streamsets-docker-image](custom-streamsets-docker-image) dir.
 
+- Edit the [Dockerfile](custom-streamsets-docker-image/Dockerfile) and set the version of the StreamSets engin you wish to extend.  For example, I will use this setting:
+
+	<code>FROM streamsets/datacollector:6.3.1</code>
+
+
+
 
 
