@@ -62,39 +62,39 @@ I'll run the script to build and push the image to my repo:
 
 Assuming the script completes without errors, I can then start a local Docker container using my new image:
 
-<code>$ docker run -d onefoursix/sdc:6.3.1</code>
+<code>$ docker run -d onefoursix/sdc:JDK17_6.3.1</code>
 
 Make sure the container is running:
 
 ```
 $ docker ps
-CONTAINER ID   IMAGE                  COMMAND                  CREATED          ...
-9506747fb609   onefoursix/sdc:6.3.1   "/docker-entrypoint.…"   13 seconds ago   ...
+CONTAINER ID   IMAGE                  COMMAND                        CREATED          ...
+5d6f5e713fc8   onefoursix/sdc:JDK17_6.3.1   "/docker-entrypoint.…"   32 seconds ago   ...
 ```
 
 Exec into the container and confirm the desired stage libs are present:
 
 ```
-$ docker exec -it 9506747fb609 bash -c 'ls -l /opt/str*/streamsets-libs'
+$ docker exec -it 5d6f5e713fc8 bash -c 'ls -l /opt/str*/streamsets-libs'
 total 44
-drwxrwxr-x 3 sdc  sdc  4096 Sep 19 23:11 streamsets-datacollector-apache-kafka-lib
-drwxrwxr-x 3 sdc  sdc  4096 Sep 19 23:11 streamsets-datacollector-aws-lib
+drwxrwxr-x 3 sdc  sdc  4096 Sep 20 02:11 streamsets-datacollector-apache-kafka-lib
+drwxrwxr-x 3 sdc  sdc  4096 Sep 20 02:11 streamsets-datacollector-aws-lib
 drwxrwxr-x 3 1000 root 4096 Jul 23 14:39 streamsets-datacollector-basic-lib
-drwxrwxr-x 3 sdc  sdc  4096 Sep 19 23:11 streamsets-datacollector-bigtable-lib
+drwxrwxr-x 3 sdc  sdc  4096 Sep 20 02:11 streamsets-datacollector-bigtable-lib
 drwxrwxr-x 3 1000 root 4096 Jul 23 14:36 streamsets-datacollector-dataformats-lib
 drwxrwxr-x 3 1000 root 4096 Jul 23 14:39 streamsets-datacollector-dev-lib
-drwxrwxr-x 3 sdc  sdc  4096 Sep 19 23:11 streamsets-datacollector-google-cloud-lib
-drwxrwxr-x 3 sdc  sdc  4096 Sep 19 23:11 streamsets-datacollector-jdbc-lib
-drwxrwxr-x 3 sdc  sdc  4096 Sep 19 23:11 streamsets-datacollector-jms-lib
-drwxrwxr-x 3 sdc  sdc  4096 Sep 19 23:11 streamsets-datacollector-jython_2_7-lib
-drwxrwxr-x 3 sdc  sdc  4096 Sep 19 23:11 streamsets-datacollector-sdc-snowflake-lib
+drwxrwxr-x 3 sdc  sdc  4096 Sep 20 02:11 streamsets-datacollector-google-cloud-lib
+drwxrwxr-x 3 sdc  sdc  4096 Sep 20 02:11 streamsets-datacollector-jdbc-lib
+drwxrwxr-x 3 sdc  sdc  4096 Sep 20 02:11 streamsets-datacollector-jms-lib
+drwxrwxr-x 3 sdc  sdc  4096 Sep 20 02:11 streamsets-datacollector-jython_2_7-lib
+drwxrwxr-x 3 sdc  sdc  4096 Sep 20 02:11 streamsets-datacollector-sdc-snowflake-lib
 ```
 
 After confirming your image has the intended stage libraries, stop and delete the container.  
 
-To use your new custom image in a StreamSets deployment, use the [Advanced Mode](https://www.ibm.com/docs/en/streamsets-controlhub?topic=deployments-kubernetes#concept_mqh_hjk_bzb__title__1) settings and set your own image coordinates within the deployment's yaml, like this:
+To use your new custom image in a StreamSets deployment, use the [Advanced Mode](https://www.ibm.com/docs/en/streamsets-controlhub?topic=deployments-kubernetes#concept_mqh_hjk_bzb__title__1) and set your own image coordinates within the deployment's yaml, like this:
 
- 
+<img src="images/custom-image-ref.png" alt="custom-image-ref" width="800" style="margin-left: 60px;"/>
 
 
 ## Technique #2: VolumeMount the stage libraries into your container at deployment time
