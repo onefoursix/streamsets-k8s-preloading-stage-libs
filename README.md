@@ -90,14 +90,18 @@ drwxrwxr-x 3 sdc  sdc  4096 Sep 19 23:11 streamsets-datacollector-jython_2_7-lib
 drwxrwxr-x 3 sdc  sdc  4096 Sep 19 23:11 streamsets-datacollector-sdc-snowflake-lib
 ```
 
-After confirming your image has the intended stage libraries, stop and delete the container. 
+After confirming your image has the intended stage libraries, stop and delete the container.  
+
+To use your new custom image in a StreamSets deployment, use the [Advanced Mode](https://www.ibm.com/docs/en/streamsets-controlhub?topic=deployments-kubernetes#concept_mqh_hjk_bzb__title__1) settings and set your own image coordinates within the deployment's yaml, like this:
+
+ 
 
 
 ## Technique #2: VolumeMount the stage libraries into your container at deployment time
 
 To VolumeMount your stage libraries into a StreamSets engine container at deployment time, you'll need some type of [Volume](https://kubernetes.io/docs/concepts/storage/volumes/#volume-types) populated with your desired stage libraries.  Your choice of volume types depends on which k8s distribution you are using and if it is running on-prem or in a public cloud.  For this example, I'll use an [NFS Volume](https://kubernetes.io/docs/concepts/storage/volumes/#nfs)
 
-- Step 1: Create and populate your Volume
+### Step 1: Create and populate your Volume
 
 I'll use an NFS server on a local linux machine adjacent to my k8s cluster.  Edit the [get-stage-libs.sh](stagelibs-volume/get-stagelibs.sh) script and set the StreamSets engine version and your desired set of stage libs.  You do not need to include the basic, dataformats, or dev stage libraries as these will be downloaded by this script by default. 
 
@@ -119,24 +123,25 @@ Execute the script:
 
 <code>$ ./get-stagelibs.sh</code>
 
-The downloaded stage libraries will be present within the parent directories <code>streamsets-datacollector-6.3.1/streamsets-libs</code> like this:
+The downloaded stage libraries will be present within the parent directories <code>streamsets-datacollector-6.3.1/streamsets-libs</code>.
+
+
+Move the top level <code>streamsets-datacollector-6.3.1</code> into your Volume and set read permissions on the stage libs.  For example, here is my NFS server share directory:
 
 ```
-$ ls -l ./streamsets-datacollector-6.3.1/streamsets-libs/
+$ sudo ls -l /srv/nfs/share/streamsets-datacollector-6.3.1/streamsets-libs/
 total 44
-drwxrwxr-x 3 mark mark 4096 Sep 20 00:40 streamsets-datacollector-apache-kafka-lib
-drwxrwxr-x 3 mark mark 4096 Sep 20 00:40 streamsets-datacollector-aws-lib
-drwxrwxr-x 3 mark mark 4096 Sep 20 00:40 streamsets-datacollector-basic-lib
-drwxrwxr-x 3 mark mark 4096 Sep 20 00:41 streamsets-datacollector-bigtable-lib
-drwxrwxr-x 3 mark mark 4096 Sep 20 00:40 streamsets-datacollector-dataformats-lib
-drwxrwxr-x 3 mark mark 4096 Sep 20 00:40 streamsets-datacollector-dev-lib
-drwxrwxr-x 3 mark mark 4096 Sep 20 00:41 streamsets-datacollector-google-cloud-lib
-drwxrwxr-x 3 mark mark 4096 Sep 20 00:41 streamsets-datacollector-jdbc-lib
-drwxrwxr-x 3 mark mark 4096 Sep 20 00:41 streamsets-datacollector-jms-lib
-drwxrwxr-x 3 mark mark 4096 Sep 20 00:41 streamsets-datacollector-jython_2_7-lib
-drwxrwxr-x 3 mark mark 4096 Sep 20 00:41 streamsets-datacollector-sdc-snowflake-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 00:54 streamsets-datacollector-apache-kafka-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 00:54 streamsets-datacollector-aws-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 00:54 streamsets-datacollector-basic-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 00:54 streamsets-datacollector-bigtable-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 00:54 streamsets-datacollector-dataformats-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 00:54 streamsets-datacollector-dev-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 00:55 streamsets-datacollector-google-cloud-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 00:55 streamsets-datacollector-jdbc-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 00:55 streamsets-datacollector-jms-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 00:55 streamsets-datacollector-jython_2_7-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 00:55 streamsets-datacollector-sdc-snowflake-lib
 ```
-
-
-
+Create a 
 
