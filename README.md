@@ -176,7 +176,7 @@ For example, my manifest has these two Volumes defined:
           name: shared-lib
 ```
 
-The InitContainer is defined like this, with two volumeMounts and a command that copies the stage lbe from the NFS Volume to the emptyDir:
+The InitContainer is defined like this, with two volumeMounts and a command that copies the stage libs from the NFS Volume to the emptyDir:
 
 ```
       initContainers:
