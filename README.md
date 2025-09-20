@@ -93,7 +93,7 @@ drwxrwxr-x 3 sdc  sdc  4096 Sep 20 02:11 streamsets-datacollector-sdc-snowflake-
 
 After confirming your image has the intended stage libraries, stop and delete the container.  
 
-To use your new custom image in a StreamSets deployment, use [Advanced Mode](https://www.ibm.com/docs/en/streamsets-controlhub?topic=deployments-kubernetes#concept_mqh_hjk_bzb__title__1) and set your own image coordinates within the deployment's yaml, like this:
+To use your new custom image in a StreamSets Kubernetes deployment, use [Advanced Mode](https://www.ibm.com/docs/en/streamsets-controlhub?topic=deployments-kubernetes#concept_mqh_hjk_bzb__title__1) and set your own image coordinates within the deployment's yaml, like this:
 
 <img src="images/custom-image-ref.png" alt="custom-image-ref" width="600" style="margin-left: 60px;"/>
 
