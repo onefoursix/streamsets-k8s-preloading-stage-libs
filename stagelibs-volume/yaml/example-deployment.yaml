@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: streamsets-deployment-xxx
+    vendor: streamsets-sch
+    env: na01
+  name: streamsets-deployment-xxx
+  namespace: ns1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: streamsets-deployment-xxx
+  template:
+    metadata:
+      labels:
+        app: streamsets-deployment-xxx
+        vendor: streamsets-sch
+        env: na01
+    spec:
+      containers:
+        - env:
+            - name: STREAMSETS_DEPLOYMENT_ID
+              value: xxx:xxx
+            - name: STREAMSETS_DEPLOYMENT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: token
+                  name: streamsets-deployment-secret-xxx
+                  optional: false
+            - name: STREAMSETS_DEPLOYMENT_SCH_URL
+              value: https://na01.hub.streamsets.com
+          image: streamsets/datacollector:JDK17_6.3.1
+          livenessProbe:
+            failureThreshold: 20
+            httpGet:
+              path: /public-rest/ping
+              port: engine-port
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+          name: streamsets-engine-xxx
+          ports:
+            - containerPort: 18630
+              name: engine-port
+          resources:
+            limits:
+              memory: 2Gi
+            requests:
+              memory: 1Gi
+              cpu: "1"
+          startupProbe:
+            failureThreshold: 60
+            httpGet:
+              path: /public-rest/ping
+              port: engine-port
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          volumeMounts:
+            - mountPath: /opt/streamsets-datacollector-6.3.1/streamsets-libs
+              name: shared-lib
+      dnsPolicy: Default
+      initContainers:
+        - command:
+            - sh
+            - -c
+            - cp -rv /source/. /target/
+          image: busybox
+          name: copy-files
+          volumeMounts:
+            - mountPath: /source
+              name: nfs-volume
+            - mountPath: /target
+              name: shared-lib
+      volumes:
+        - name: nfs-volume
+          nfs:
+            path: /srv/nfs/share/streamsets-datacollector-6.3.1/streamsets-libs
+            readOnly: true
+            server: 10.10.10.186
+        - emptyDir: {}
+          name: shared-lib

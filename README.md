@@ -152,7 +152,7 @@ drwxr-xr-x 3 mark mark 4096 Sep 20 04:51 streamsets-datacollector-jython_2_7-lib
 drwxr-xr-x 3 mark mark 4096 Sep 20 04:51 streamsets-datacollector-sdc-snowflake-lib
 ```
 ### Step 3: Create and start a StreamSets Kubernetes Deployment
-Create a StreamSets Kubernetes Deployment. There is no need to edit the image used, as we want to use the default image which will be something like <code>streamsets/datacollector:JDK17_6.3.1</code>.
+Create a StreamSets Kubernetes Deployment. There is no need to edit the image used as we want to use the default image, like <code>streamsets/datacollector:JDK17_6.3.1</code>.
 
 Make sure to configure the deployment with all of the stage libraries you will later preload. At this point, to understand how things work, start the deployment without yet preloading the stage libs.  As the deployment starts, you should see confirmation that the specified stage libs are being downloaded as part of the bootstrap process:
 
