@@ -176,7 +176,7 @@ For example, my manifest has these two Volumes defined:
           name: shared-lib
 ```
 
-The InitContainer is defined like this, with two volumeMounts and a command that copies the stage libs from the NFS Volume to the emptyDir:
+The InitContainer is defined like this, with two volumeMounts and a command that copies the stage libs from the NFS volume to the emptyDir:
 
 ```
       initContainers:
@@ -200,3 +200,9 @@ Finally, the StreamSets engine container has this volumeMount that mounts the em
               name: shared-lib
 
 A full example deployment manifest example is [here](stagelibs-volume/yaml/example-deployment.yaml).
+
+
+With those changes in place, start the deployment again, and if all goes well, you will see that no stage libs needed to be downloaded:
+
+<img src="images/stage-libs-deployed-2.png" alt="stage-libs-deployed-2" width="900" style="margin-left: 60px;"/>
+
