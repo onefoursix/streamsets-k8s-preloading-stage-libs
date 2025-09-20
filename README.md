@@ -101,9 +101,11 @@ To use your new custom image in a StreamSets deployment, use [Advanced Mode](htt
 
 To VolumeMount your stage libraries into a StreamSets engine container at deployment time, you'll need some type of [Volume](https://kubernetes.io/docs/concepts/storage/volumes/#volume-types) populated with your desired stage libraries.  Your choice of volume types depends on which k8s distribution you are using and if it is running on-prem or in a public cloud.  For this example, I'll use an [NFS Volume](https://kubernetes.io/docs/concepts/storage/volumes/#nfs)
 
-### Step 1: Create and populate your Volume
+### Step 1: Create and populate a Volume
 
-I'll use an NFS server on a local linux machine adjacent to my k8s cluster.  Edit the [get-stage-libs.sh](stagelibs-volume/get-stagelibs.sh) script and set the StreamSets engine version and your desired set of stage libs.  You do not need to include the basic, dataformats, or dev stage libraries as these will be downloaded by this script by default. 
+I'll use an NFS server on a local linux machine adjacent to my k8s cluster as my Volume. 
+ 
+Edit the [get-stage-libs.sh](stagelibs-volume/get-stagelibs.sh) script and set the StreamSets engine version and your desired set of stage libs.  You do not need to include the <code>basic</code>, <code>dataformats</code>, or <code>dev</code> stage libraries as these will be downloaded by this script by default. 
 
 For example, these are my settings in the script:
 
@@ -143,5 +145,8 @@ drwxr-xr-x 3 mark mark 4096 Sep 20 00:55 streamsets-datacollector-jms-lib
 drwxr-xr-x 3 mark mark 4096 Sep 20 00:55 streamsets-datacollector-jython_2_7-lib
 drwxr-xr-x 3 mark mark 4096 Sep 20 00:55 streamsets-datacollector-sdc-snowflake-lib
 ```
-Create a 
+### Step 3: Create and start a StreamSets Kubernetes Deployment
+Create a StreamSets Kubernetes Deployment. Make sure to select all of the stage libraries you will later preload. At this point, to understand how things work, start the deployment without yet setting the VolumeMount in place.  As the deployment starts, you should see confirmations that the specified stage libs are being downloaded as part of the bootstrap process:
+
+<img src="images/stage-libs-deployed-1.png" alt="stage-libs-deployed-1" width="700" style="margin-left: 60px;"/>
 
