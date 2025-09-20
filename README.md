@@ -19,7 +19,7 @@ To create your own StreamSets Engine image with stage libraries included, start 
 
 - Edit the [Dockerfile](custom-streamsets-docker-image/Dockerfile) and set the version of the StreamSets engin you wish to extend.  For example, I will use this setting:
 
-	<code>FROM streamsets/datacollector:6.3.1</code>
+	<code>FROM streamsets/datacollector:JDK17_6.3.1
 	
 - Edit the [build.sh](custom-streamsets-docker-image/build.sh) script and make the following changes:
 
@@ -46,7 +46,7 @@ For example, I'll set these properties in my <code>build.sh</code> script:
 SDC_VERSION=6.3.1
 
 # Your custom image name
-IMAGE_NAME=onefoursix/sdc:6.3.1
+IMAGE_NAME=onefoursix/sdc:JDK17_6.3.1
 
 # A space delimited list of stage libs to download
 SDC_STAGE_LIBS="apache-kafka aws bigtable google-cloud groovy_4.0 jdbc jms jython_2_7 sdc-snowflake"
