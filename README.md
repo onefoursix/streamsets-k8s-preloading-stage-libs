@@ -9,7 +9,7 @@ The two approaches are:
 
 - Using a shared Volume and an [Init Container](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/) to copy the stage libs into the container at deployment time.
 
-The former approach is easier to configure than the latter, and is easier to test and deploy. However, it requires a new image be built and pushed every time new stage libraries need to be preloaded.  The latter approach, though more complex to configure, is more flexible as it allows changes to the preloaded stage libs at any time, and a shared Volume mount may also come in handy for other artifacts such as JDBC drivers,
+The former approach is easier to configure than the latter, and is easier to test and deploy. However, it requires a new image be built and pushed every time new stage libraries need to be preloaded.  The latter approach, though more complex to configure, is more flexible as it allows changes to the preloaded stage libs at any time, and a shared Volume mount may also come in handy for other artifacts such as JDBC drivers that need to be made available to engines.
 
 ## Important Note
 Make sure to always include the selection of stage libraries you are preloading in your Control Hub Deployment configuration as well.  This ensures that Control Hub knows what stage libraries should be present in your engine's file system.
