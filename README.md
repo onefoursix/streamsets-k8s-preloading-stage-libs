@@ -49,7 +49,7 @@ SDC_VERSION=6.3.1
 IMAGE_NAME=onefoursix/sdc:JDK17_6.3.1
 
 # A space delimited list of stage libs to download
-SDC_STAGE_LIBS="apache-kafka aws bigtable google-cloud groovy_4.0 jdbc jms jython_2_7 sdc-snowflake"
+SDC_STAGE_LIBS="apache-kafka aws bigtable google-cloud groovy_4_0 jdbc jms jython_2_7 sdc-snowflake"
 ```
 
 Make the script executable:
