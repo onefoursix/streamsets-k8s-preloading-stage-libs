@@ -136,19 +136,20 @@ The downloaded stage libraries will be present within the parent directory <code
 Move the top level <code>streamsets-datacollector-6.3.1</code> into your Volume and set read permissions on the stage libs.  For example, here is my NFS server's share directory:
 
 ```
-$ sudo ls -l /srv/nfs/share/streamsets-datacollector-6.3.1/streamsets-libs/
-total 44
-drwxr-xr-x 3 mark mark 4096 Sep 20 00:54 streamsets-datacollector-apache-kafka-lib
-drwxr-xr-x 3 mark mark 4096 Sep 20 00:54 streamsets-datacollector-aws-lib
-drwxr-xr-x 3 mark mark 4096 Sep 20 00:54 streamsets-datacollector-basic-lib
-drwxr-xr-x 3 mark mark 4096 Sep 20 00:54 streamsets-datacollector-bigtable-lib
-drwxr-xr-x 3 mark mark 4096 Sep 20 00:54 streamsets-datacollector-dataformats-lib
-drwxr-xr-x 3 mark mark 4096 Sep 20 00:54 streamsets-datacollector-dev-lib
-drwxr-xr-x 3 mark mark 4096 Sep 20 00:55 streamsets-datacollector-google-cloud-lib
-drwxr-xr-x 3 mark mark 4096 Sep 20 00:55 streamsets-datacollector-jdbc-lib
-drwxr-xr-x 3 mark mark 4096 Sep 20 00:55 streamsets-datacollector-jms-lib
-drwxr-xr-x 3 mark mark 4096 Sep 20 00:55 streamsets-datacollector-jython_2_7-lib
-drwxr-xr-x 3 mark mark 4096 Sep 20 00:55 streamsets-datacollector-sdc-snowflake-lib
+$ ls -l streamsets-datacollector-6.3.1/streamsets-libs/
+total 48
+drwxr-xr-x 3 mark mark 4096 Sep 20 04:51 streamsets-datacollector-apache-kafka-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 04:51 streamsets-datacollector-aws-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 04:51 streamsets-datacollector-basic-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 04:51 streamsets-datacollector-bigtable-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 04:51 streamsets-datacollector-dataformats-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 04:51 streamsets-datacollector-dev-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 04:51 streamsets-datacollector-google-cloud-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 04:51 streamsets-datacollector-groovy_4_0-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 04:51 streamsets-datacollector-jdbc-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 04:51 streamsets-datacollector-jms-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 04:51 streamsets-datacollector-jython_2_7-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 04:51 streamsets-datacollector-sdc-snowflake-lib
 ```
 ### Step 3: Create and start a StreamSets Kubernetes Deployment
 Create a StreamSets Kubernetes Deployment. There is no need to edit the image used, as we want to use the default image which will be something like <code>streamsets/datacollector:JDK17_6.3.1</code>.
