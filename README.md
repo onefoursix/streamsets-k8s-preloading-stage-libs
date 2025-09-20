@@ -1,13 +1,13 @@
 # streamsets-k8s-preloading-stage-libs
 This project describes two approaches for preloading StreamSets stage libs when deploying StreamSets engines on k8s.  
 
-These techniques can speed up the time it takes for a new StreamSets engine pod to come online if multiple stagelibs would otherwise need to be downloaded across a slow WAN.
+These techniques can speed up the time it takes for a new StreamSets engine pod to come online if multiple stage libs would otherwise need to be downloaded across a slow WAN.
 
 The two approaches are: 
 
 - Building your own Docker image that extends the StreamSets engine's image and includes the desired stage libraries (i.e. "baking-in" the  stage libs).
 
-- VolumeMounting the stage libs from a shared volume at deployment time.
+- Using a shared Volume and an [Init Container](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/)to copy the stage libs into the container at deployment time.
 
 ## Important Note
 Make sure to always include the selection of stage libraries you are preloading in your Control Hub Deployment as well.  This ensures that Control Hub knows what stage libraries should be present in your engine's file system.
@@ -146,7 +146,14 @@ drwxr-xr-x 3 mark mark 4096 Sep 20 00:55 streamsets-datacollector-jython_2_7-lib
 drwxr-xr-x 3 mark mark 4096 Sep 20 00:55 streamsets-datacollector-sdc-snowflake-lib
 ```
 ### Step 3: Create and start a StreamSets Kubernetes Deployment
-Create a StreamSets Kubernetes Deployment. Make sure to select all of the stage libraries you will later preload. At this point, to understand how things work, start the deployment without yet setting the VolumeMount in place.  As the deployment starts, you should see confirmations that the specified stage libs are being downloaded as part of the bootstrap process:
+Create a StreamSets Kubernetes Deployment. There is no need to edit the image used, as we ant to use the default image which will be something like <code>streamsets/sdc:JDK17_6.3.1</code>.
+
+Make sure to select all of the stage libraries you will later preload. At this point, to understand how things work, start the deployment without yet setting the VolumeMount in place.  As the deployment starts, you should see confirmation that the specified stage libs are being downloaded as part of the bootstrap process:
 
 <img src="images/stage-libs-deployed-1.png" alt="stage-libs-deployed-1" width="900" style="margin-left: 60px;"/>
+
+Stop the deployment which will terminate the engine.
+
+Edit the deployment's Advanced Mode and add sections for your Volume and VolumeMount.  For example, my NFS Volume looks like this:
+
 
