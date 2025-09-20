@@ -76,7 +76,7 @@ Exec into the container and confirm the desired stage libs are present:
 
 ```
 $ docker exec -it 5d6f5e713fc8 bash -c 'ls -l /opt/str*/streamsets-libs'
-total 44
+total 48
 drwxrwxr-x 3 sdc  sdc  4096 Sep 20 02:11 streamsets-datacollector-apache-kafka-lib
 drwxrwxr-x 3 sdc  sdc  4096 Sep 20 02:11 streamsets-datacollector-aws-lib
 drwxrwxr-x 3 1000 root 4096 Jul 23 14:39 streamsets-datacollector-basic-lib
@@ -84,6 +84,7 @@ drwxrwxr-x 3 sdc  sdc  4096 Sep 20 02:11 streamsets-datacollector-bigtable-lib
 drwxrwxr-x 3 1000 root 4096 Jul 23 14:36 streamsets-datacollector-dataformats-lib
 drwxrwxr-x 3 1000 root 4096 Jul 23 14:39 streamsets-datacollector-dev-lib
 drwxrwxr-x 3 sdc  sdc  4096 Sep 20 02:11 streamsets-datacollector-google-cloud-lib
+drwxrwxr-x 3 sdc  sdc  4096 Sep 20 04:34 streamsets-datacollector-groovy_4_0-lib
 drwxrwxr-x 3 sdc  sdc  4096 Sep 20 02:11 streamsets-datacollector-jdbc-lib
 drwxrwxr-x 3 sdc  sdc  4096 Sep 20 02:11 streamsets-datacollector-jms-lib
 drwxrwxr-x 3 sdc  sdc  4096 Sep 20 02:11 streamsets-datacollector-jython_2_7-lib
