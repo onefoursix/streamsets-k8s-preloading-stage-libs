@@ -148,5 +148,5 @@ drwxr-xr-x 3 mark mark 4096 Sep 20 00:55 streamsets-datacollector-sdc-snowflake-
 ### Step 3: Create and start a StreamSets Kubernetes Deployment
 Create a StreamSets Kubernetes Deployment. Make sure to select all of the stage libraries you will later preload. At this point, to understand how things work, start the deployment without yet setting the VolumeMount in place.  As the deployment starts, you should see confirmations that the specified stage libs are being downloaded as part of the bootstrap process:
 
-<img src="images/stage-libs-deployed-1.png" alt="stage-libs-deployed-1" width="700" style="margin-left: 60px;"/>
+<img src="images/stage-libs-deployed-1.png" alt="stage-libs-deployed-1" width="900" style="margin-left: 60px;"/>
 
