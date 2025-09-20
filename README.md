@@ -135,7 +135,7 @@ Execute the script:
 The downloaded stage libraries will be present within the parent directory <code>streamsets-datacollector-6.3.1/streamsets-libs</code>.
 
 
-Move the top level <code>streamsets-datacollector-6.3.1</code> into your Volume and set read permissions on the stage libs.  For example, here is my NFS server's share directory:
+Move the top level <code>streamsets-datacollector-6.3.1</code> directory into your Volume and set read permissions on the stage libs.  For example, here is my NFS server's share directory:
 
 ```
 $ ls -l streamsets-datacollector-6.3.1/streamsets-libs/
