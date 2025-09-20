@@ -208,3 +208,7 @@ With those changes in place, start the deployment again, and if all goes well, y
 
 <img src="images/stage-libs-deployed-2.png" alt="stage-libs-deployed-2" width="900" style="margin-left: 60px;"/>
 
+
+
+## Make sure everything works! 
+Make sure your engine  comes up healthy and the preloaded stage libs are all available for authoring!
