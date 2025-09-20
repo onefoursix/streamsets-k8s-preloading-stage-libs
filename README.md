@@ -19,7 +19,7 @@ Make sure to always include the selection of stage libraries you are preloading 
 
 To create your own StreamSets Engine image with stage libraries included, start by cloning  this project to a linux machine and changing to the [custom-streamsets-docker-image](custom-streamsets-docker-image) dir.
 
-- Edit the [Dockerfile](custom-streamsets-docker-image/Dockerfile) and set the version of the StreamSets engin you wish to extend.  For example, I will use this setting:
+- Edit the [Dockerfile](custom-streamsets-docker-image/Dockerfile) and set the version of the StreamSets engine you wish to extend.  For example, I will use this setting:
 
 	<code>FROM streamsets/datacollector:JDK17_6.3.1</code>
 	
@@ -135,34 +135,37 @@ Execute the script:
 The downloaded stage libraries will be present within the parent directory <code>streamsets-datacollector-6.3.1/streamsets-libs</code>.
 
 
-Move the top level <code>streamsets-datacollector-6.3.1</code> directory into your Volume and set read permissions on the stage libs.  For example, here is my NFS server's share directory:
+Move the top level <code>streamsets-datacollector-6.3.1</code> directory into your Volume and set read permissions on the stage libs.  For example, here are the stage libs in my NFS server's share directory:
 
 ```
 $ ls -l /srv/nfs/share/streamsets-datacollector-6.3.1/streamsets-libs/
 total 48
-drwxrwxr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-apache-kafka-lib
-drwxrwxr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-aws-lib
-drwxrwxr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-basic-lib
-drwxrwxr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-bigtable-lib
-drwxrwxr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-dataformats-lib
-drwxrwxr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-dev-lib
-drwxrwxr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-google-cloud-lib
-drwxrwxr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-groovy_4_0-lib
-drwxrwxr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-jdbc-lib
-drwxrwxr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-jms-lib
-drwxrwxr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-jython_2_7-lib
-drwxrwxr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-sdc-snowflake-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-apache-kafka-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-aws-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-basic-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-bigtable-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-dataformats-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-dev-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-google-cloud-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-groovy_4_0-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-jdbc-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-jms-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-jython_2_7-lib
+drwxr-xr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-sdc-snowflake-lib
 ```
-### Step 3: Create and start a StreamSets Kubernetes Deployment
-Create a StreamSets Kubernetes Deployment. There is no need to edit the image used as we want to use the default image, like <code>streamsets/datacollector:JDK17_6.3.1</code>.
+### Step 2: Create a StreamSets Kubernetes Deployment
+Create a StreamSets Kubernetes Deployment. There is no need to edit the image used as we want to use the default image, like <code>streamsets/datacollector:JDK17_6.3.1</code>. Make sure to configure the deployment with all of the stage libraries you will later preload. 
 
-Make sure to configure the deployment with all of the stage libraries you will later preload. At this point, to understand how things work, start the deployment without yet preloading any stage libs.  As the deployment starts, you should see messages that indicate that the specified stage libs are being downloaded as part of the bootstrap process:
+
+### Step 3 (Optional): Start the StreamSets Kubernetes Deployment before preloading stage libs
+
+At this point, to understand how things work, you could start the deployment without yet preloading any stage libs.  As the deployment starts, you should see messages that indicate that the specified stage libs are being downloaded as part of the bootstrap process:
 
 <img src="images/stage-libs-deployed-1.png" alt="stage-libs-deployed-1" width="900" style="margin-left: 60px;"/>
 
 Stop the deployment which will terminate the engine.
 
-Step 4: Add Volumes, VolumeMounts, and an InitContainer to the Deployment
+### Step 4: Add Volumes, VolumeMounts, and an InitContainer to the Deployment
 
 Edit the deployment's Advanced Mode and add sections for two Volumes - one for the Volume with the stage libs, another for an [emptyDir](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir) that will be used to store the preloaded stagelibs.  
 
