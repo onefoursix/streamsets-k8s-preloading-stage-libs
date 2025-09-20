@@ -154,18 +154,27 @@ drwxr-xr-x 3 mark mark 4096 Sep 20 04:51 streamsets-datacollector-sdc-snowflake-
 ### Step 3: Create and start a StreamSets Kubernetes Deployment
 Create a StreamSets Kubernetes Deployment. There is no need to edit the image used as we want to use the default image, like <code>streamsets/datacollector:JDK17_6.3.1</code>.
 
-Make sure to configure the deployment with all of the stage libraries you will later preload. At this point, to understand how things work, start the deployment without yet preloading the stage libs.  As the deployment starts, you should see confirmation that the specified stage libs are being downloaded as part of the bootstrap process:
+Make sure to configure the deployment with all of the stage libraries you will later preload. At this point, to understand how things work, start the deployment without yet preloading any stage libs.  As the deployment starts, you should see messages that indicate that the specified stage libs are being downloaded as part of the bootstrap process:
 
 <img src="images/stage-libs-deployed-1.png" alt="stage-libs-deployed-1" width="900" style="margin-left: 60px;"/>
 
 Stop the deployment which will terminate the engine.
 
-Step 4: Add Volumes and an InitContainer to the Deployment
+Step 4: Add Volumes, VolumeMounts, and an InitContainer to the Deployment
 
-Edit the deployment's Advanced Mode and add sections for two Volumes - one for the Volume with the stage libs, another for an [emptyDir](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir) that will be used by the InitContainer.  Here is a snippet of the two Volumes (a full example deployment manifest example is [here] )
+Edit the deployment's Advanced Mode and add sections for two Volumes - one for the Volume with the stage libs, another for an [emptyDir](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir) that will be used to store the preloaded stagelibs.  Here is a snippet of the two Volumes (a full example deployment manifest example is [here](stagelibs-volume/yaml/example-deployment.yaml) )
 
 
-  For example, my NFS Volume looks like this:
+For example, my manifest has these two Volumes defined:
+
+      volumes:
+        - name: nfs-volume
+          nfs:
+            path: /srv/nfs/share/streamsets-datacollector-6.3.1/streamsets-libs
+            readOnly: true
+            server: 10.10.10.186
+        - emptyDir: {}
+          name: shared-lib
 
 
 
