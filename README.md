@@ -97,6 +97,46 @@ After confirming your image has the intended stage libraries, stop and delete th
 
 To VolumeMount your stage libraries into a StreamSets engine container at deployment time, you'll need some type of [Volume](https://kubernetes.io/docs/concepts/storage/volumes/#volume-types) populated with your desired stage libraries.  Your choice of volume types depends on which k8s distribution you are using and if it is running on-prem or in a public cloud.  For this example, I'll use an [NFS Volume](https://kubernetes.io/docs/concepts/storage/volumes/#nfs)
 
+- Step 1: Create and populate your Volume
+
+I'll use an NFS server on a local linux machine adjacent to my k8s cluster.  Edit the [get-stage-libs.sh](stagelibs-volume/get-stagelibs.sh) script and set the StreamSets engine version and your desired set of stage libs.  You do not need to include the basic, dataformats, or dev stage libraries as these will be downloaded by this script by default. 
+
+For example, these are my settings in the script:
+
+```
+# SDC Version
+SDC_VERSION=6.3.1
+
+# A space delimited list of stage libs to download
+USER_STAGE_LIBS="apache-kafka aws bigtable google-cloud groovy_4.0 jdbc jms jython_2_7 sdc-snowflake"
+```
+
+Copy the script to an empty directory on a linux machine and make the script executable:
+
+<code>$ chmod +x get-stagelibs.sh</code>
+
+Execute the script:
+
+<code>$ ./get-stagelibs.sh</code>
+
+The downloaded stage libraries will be present within the parent directories <code>streamsets-datacollector-6.3.1/streamsets-libs</code> like this:
+
+```
+$ ls -l ./streamsets-datacollector-6.3.1/streamsets-libs/
+total 44
+drwxrwxr-x 3 mark mark 4096 Sep 20 00:40 streamsets-datacollector-apache-kafka-lib
+drwxrwxr-x 3 mark mark 4096 Sep 20 00:40 streamsets-datacollector-aws-lib
+drwxrwxr-x 3 mark mark 4096 Sep 20 00:40 streamsets-datacollector-basic-lib
+drwxrwxr-x 3 mark mark 4096 Sep 20 00:41 streamsets-datacollector-bigtable-lib
+drwxrwxr-x 3 mark mark 4096 Sep 20 00:40 streamsets-datacollector-dataformats-lib
+drwxrwxr-x 3 mark mark 4096 Sep 20 00:40 streamsets-datacollector-dev-lib
+drwxrwxr-x 3 mark mark 4096 Sep 20 00:41 streamsets-datacollector-google-cloud-lib
+drwxrwxr-x 3 mark mark 4096 Sep 20 00:41 streamsets-datacollector-jdbc-lib
+drwxrwxr-x 3 mark mark 4096 Sep 20 00:41 streamsets-datacollector-jms-lib
+drwxrwxr-x 3 mark mark 4096 Sep 20 00:41 streamsets-datacollector-jython_2_7-lib
+drwxrwxr-x 3 mark mark 4096 Sep 20 00:41 streamsets-datacollector-sdc-snowflake-lib
+```
+
 
 
 
