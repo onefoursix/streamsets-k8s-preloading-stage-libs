@@ -38,7 +38,7 @@ To create your own StreamSets Engine image with stage libraries included, start 
     
 Tip: To see the full names of StreamSets stage libraries, create a scratch deployment in Control Hub, select the stage libraries you want, and then view the stage libs summary:
 
-<img src="images/stage-libs.png" alt="stage-libs-list" width="800" style="margin-left: 60px;"/>
+<img src="images/stage-libs.png" alt="stage-libs-list" width="600" style="margin-left: 60px;"/>
     
 For example, I'll set these properties in my <code>build.sh</code> script:
 ```
