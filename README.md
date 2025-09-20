@@ -7,10 +7,10 @@ The two approaches are:
 
 - Building your own Docker image that extends the StreamSets engine's image and includes the desired stage libraries (i.e. "baking-in" the  stage libs).
 
-- Using a shared Volume and an [Init Container](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/)to copy the stage libs into the container at deployment time.
+- Using a shared Volume and an [Init Container](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/) to copy the stage libs into the container at deployment time.
 
 ## Important Note
-Make sure to always include the selection of stage libraries you are preloading in your Control Hub Deployment as well.  This ensures that Control Hub knows what stage libraries should be present in your engine's file system.
+Make sure to always include the selection of stage libraries you are preloading in your Control Hub Deployment configuration as well.  This ensures that Control Hub knows what stage libraries should be present in your engine's file system.
 
 
 ## Technique #1: Creating a custom StreamSets Engine image with stage libraries included.
@@ -96,16 +96,20 @@ To use your new custom image in a StreamSets deployment, use [Advanced Mode](htt
 
 <img src="images/custom-image-ref.png" alt="custom-image-ref" width="600" style="margin-left: 60px;"/>
 
+Start a deployment using that new image and note in the deployment messages that no stage libraries needed to be downloaded:
 
-## Technique #2: VolumeMount the stage libraries into your container at deployment time
+<img src="images/installed-stage-libs.png" alt="installed-stage-libs" width="800" style="margin-left: 60px;"/>
 
-To VolumeMount your stage libraries into a StreamSets engine container at deployment time, you'll need some type of [Volume](https://kubernetes.io/docs/concepts/storage/volumes/#volume-types) populated with your desired stage libraries.  Your choice of volume types depends on which k8s distribution you are using and if it is running on-prem or in a public cloud.  For this example, I'll use an [NFS Volume](https://kubernetes.io/docs/concepts/storage/volumes/#nfs)
+
+## Technique #2: Use a Volume and an InitContainer to copy stage libs into your container at deployment time.
+
 
 ### Step 1: Create and populate a Volume
 
-I'll use an NFS server on a local linux machine adjacent to my k8s cluster as my Volume. 
+
+First, you'll need some type of [Volume](https://kubernetes.io/docs/concepts/storage/volumes/#volume-types) populated with your desired stage libraries.  Your choice of volume type depends on which k8s distribution you are using and if it is running on-prem or in a public cloud.  For this example, I'll use an [NFS Volume](https://kubernetes.io/docs/concepts/storage/volumes/#nfs) mapped to an NFS server on a linux machine adjacent to my k8s cluster.
  
-Edit the [get-stage-libs.sh](stagelibs-volume/get-stagelibs.sh) script and set the StreamSets engine version and your desired set of stage libs.  You do not need to include the <code>basic</code>, <code>dataformats</code>, or <code>dev</code> stage libraries as these will be downloaded by this script by default. 
+To populate your volume, copy the [get-stage-libs.sh](stagelibs-volume/get-stagelibs.sh) script and set the StreamSets engine version and your desired set of stage libs.  You do not need to include the <code>basic</code>, <code>dataformats</code>, or <code>dev</code> stage libraries as these will be downloaded by this script by default. 
 
 For example, these are my settings in the script:
 
@@ -125,10 +129,10 @@ Execute the script:
 
 <code>$ ./get-stagelibs.sh</code>
 
-The downloaded stage libraries will be present within the parent directories <code>streamsets-datacollector-6.3.1/streamsets-libs</code>.
+The downloaded stage libraries will be present within the parent directory <code>streamsets-datacollector-6.3.1/streamsets-libs</code>.
 
 
-Move the top level <code>streamsets-datacollector-6.3.1</code> into your Volume and set read permissions on the stage libs.  For example, here is my NFS server share directory:
+Move the top level <code>streamsets-datacollector-6.3.1</code> into your Volume and set read permissions on the stage libs.  For example, here is my NFS server's share directory:
 
 ```
 $ sudo ls -l /srv/nfs/share/streamsets-datacollector-6.3.1/streamsets-libs/
@@ -146,14 +150,21 @@ drwxr-xr-x 3 mark mark 4096 Sep 20 00:55 streamsets-datacollector-jython_2_7-lib
 drwxr-xr-x 3 mark mark 4096 Sep 20 00:55 streamsets-datacollector-sdc-snowflake-lib
 ```
 ### Step 3: Create and start a StreamSets Kubernetes Deployment
-Create a StreamSets Kubernetes Deployment. There is no need to edit the image used, as we ant to use the default image which will be something like <code>streamsets/sdc:JDK17_6.3.1</code>.
+Create a StreamSets Kubernetes Deployment. There is no need to edit the image used, as we want to use the default image which will be something like <code>streamsets/datacollector:JDK17_6.3.1</code>.
 
-Make sure to select all of the stage libraries you will later preload. At this point, to understand how things work, start the deployment without yet setting the VolumeMount in place.  As the deployment starts, you should see confirmation that the specified stage libs are being downloaded as part of the bootstrap process:
+Make sure to configure the deployment with all of the stage libraries you will later preload. At this point, to understand how things work, start the deployment without yet preloading the stage libs.  As the deployment starts, you should see confirmation that the specified stage libs are being downloaded as part of the bootstrap process:
 
 <img src="images/stage-libs-deployed-1.png" alt="stage-libs-deployed-1" width="900" style="margin-left: 60px;"/>
 
 Stop the deployment which will terminate the engine.
 
-Edit the deployment's Advanced Mode and add sections for your Volume and VolumeMount.  For example, my NFS Volume looks like this:
+Step 4: Add Volumes and an InitContainer to the Deployment
+
+Edit the deployment's Advanced Mode and add sections for two Volumes - one for the Volume with the stage libs, another for an [emptyDir](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir) that will be used by the InitContainer.  Here is a snippet of the two Volumes (a full example deployment manifest example is [here] )
+
+
+  For example, my NFS Volume looks like this:
+
+
 
 

@@ -17,7 +17,7 @@
 SDC_VERSION=6.3.1
 
 # A space delimited list of stage libs to download
-USER_STAGE_LIBS="apache-kafka aws bigtable google-cloud groovy_4.0 jdbc jms jython_2_7 sdc-snowflake"
+USER_STAGE_LIBS="apache-kafka aws bigtable google-cloud groovy_4_0 jdbc jms jython_2_7 sdc-snowflake"
 
 
 # Default stage libs

@@ -26,7 +26,7 @@ SDC_VERSION=6.3.1
 IMAGE_NAME=<org>/<image>:<tag>
 
 # A space delimited list of stage libs to download
-SDC_STAGE_LIBS="apache-kafka aws bigtable google-cloud groovy_4.0 jdbc jms jython_2_7 sdc-snowflake"
+SDC_STAGE_LIBS="apache-kafka aws bigtable google-cloud groovy_4_0 jdbc jms jython_2_7 sdc-snowflake"
 
 # Base URL to download SDC Stage Libs
 BASE_URL=https://archives.streamsets.com/datacollector
