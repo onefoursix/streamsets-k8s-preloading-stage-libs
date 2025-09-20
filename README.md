@@ -166,7 +166,6 @@ Edit the deployment's Advanced Mode and add sections for two Volumes - one for t
 
 For example, my manifest has these two Volumes defined:
 ```
-
       volumes:
         - name: nfs-volume
           nfs:
