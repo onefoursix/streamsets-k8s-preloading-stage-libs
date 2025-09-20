@@ -200,4 +200,4 @@ Finally, the StreamSets engine container has this volumeMount that mounts the em
             - mountPath: /opt/streamsets-datacollector-6.3.1/streamsets-libs
               name: shared-lib
 
-A full example deployment manifest example is [here](stagelibs-volume/yaml/example-deployment.yaml) )
+A full example deployment manifest example is [here](stagelibs-volume/yaml/example-deployment.yaml).
