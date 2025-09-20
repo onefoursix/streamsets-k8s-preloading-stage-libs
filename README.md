@@ -97,7 +97,7 @@ To use your new custom image in a StreamSets deployment, use [Advanced Mode](htt
 
 <img src="images/custom-image-ref.png" alt="custom-image-ref" width="600" style="margin-left: 60px;"/>
 
-Start a deployment using that new image and note in the deployment messages that no stage libraries needed to be downloaded:
+Start a deployment using that new image and confirm in the deployment messages that no stage libraries needed to be downloaded:
 
 <img src="images/installed-stage-libs.png" alt="installed-stage-libs" width="800" style="margin-left: 60px;"/>
 
