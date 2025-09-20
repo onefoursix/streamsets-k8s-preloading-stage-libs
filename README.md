@@ -162,10 +162,10 @@ Stop the deployment which will terminate the engine.
 
 Step 4: Add Volumes, VolumeMounts, and an InitContainer to the Deployment
 
-Edit the deployment's Advanced Mode and add sections for two Volumes - one for the Volume with the stage libs, another for an [emptyDir](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir) that will be used to store the preloaded stagelibs.  Here is a snippet of the two Volumes (a full example deployment manifest example is [here](stagelibs-volume/yaml/example-deployment.yaml) )
-
+Edit the deployment's Advanced Mode and add sections for two Volumes - one for the Volume with the stage libs, another for an [emptyDir](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir) that will be used to store the preloaded stagelibs.  
 
 For example, my manifest has these two Volumes defined:
+```
 
       volumes:
         - name: nfs-volume
@@ -175,7 +175,29 @@ For example, my manifest has these two Volumes defined:
             server: 10.10.10.186
         - emptyDir: {}
           name: shared-lib
+```
 
+The InitContainer is defined like this, with two volumeMounts and a command that copies the stage lbe from the NFS Volume to the emptyDir:
 
+```
+      initContainers:
+        - command:
+            - sh
+            - -c
+            - cp -rv /source/. /target/
+          image: busybox
+          name: copy-files
+          volumeMounts:
+            - mountPath: /source
+              name: nfs-volume
+            - mountPath: /target
+              name: shared-lib
+```
 
+Finally, the StreamSets engine container has this volumeMount that mounts the emptyDir (that now holds the stage libs) into the streamsets-libs dir:
 
+          volumeMounts:
+            - mountPath: /opt/streamsets-datacollector-6.3.1/streamsets-libs
+              name: shared-lib
+
+A full example deployment manifest example is [here](stagelibs-volume/yaml/example-deployment.yaml) )
