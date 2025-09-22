@@ -62,25 +62,13 @@ spec:
             timeoutSeconds: 5
           volumeMounts:
             - mountPath: /opt/streamsets-datacollector-6.3.1/streamsets-libs
-              name: shared-lib
+              name: stagelibs
+              readOnly: true
+              subPath: streamsets-libs
       dnsPolicy: Default
-      initContainers:
-        - command:
-            - sh
-            - -c
-            - cp -rv /source/. /target/
-          image: busybox
-          name: copy-files
-          volumeMounts:
-            - mountPath: /source
-              name: nfs-volume
-            - mountPath: /target
-              name: shared-lib
       volumes:
-        - name: nfs-volume
+        - name: stagelibs
           nfs:
-            path: /srv/nfs/share/streamsets-datacollector-6.3.1/streamsets-libs
+            path: /srv/nfs/share/streamsets-datacollector-6.3.1
             readOnly: true
             server: 10.10.10.186
-        - emptyDir: {}
-          name: shared-lib

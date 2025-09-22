@@ -7,15 +7,22 @@ The two approaches are:
 
 - Building your own Docker image that extends the StreamSets engine's image and includes the desired stage libraries (i.e. "baking-in" the  stage libs).
 
-- Using a shared Volume and an [Init Container](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/) to copy the stage libs into the container at deployment time.
+- Using a Volume and a VolumeMount to mount the stage libs into the container at deployment time.
 
-The former approach is easier to configure than the latter, and is easier to test and deploy. However, it requires a new image be built and pushed every time new stage libraries need to be preloaded.  The latter approach, though more complex to configure, is more flexible as it allows changes to the preloaded stage libs at any time, and a shared Volume mount may also come in handy for other artifacts such as JDBC drivers that need to be made available to engines.
+The former approach is easier to configure than the latter, and is easier to test and deploy. However, it requires a new image be built and pushed every time new stage libraries need to be preloaded.  The latter approach, though more complex to configure, is more flexible as it allows changes to the preloaded stage libs at any time, and a VolumeMount may also come in handy for other artifacts such as JDBC drivers that need to be made available to engines.
 
-## Important Note
-Make sure to always include the selection of stage libraries you are preloading in your Control Hub Deployment configuration as well.  This ensures that Control Hub knows what stage libraries should be present in your engine's file system.
+## Set the "Show Stage Library Mode"
+For either technique, an Org Admin should set the <code>Show Stage Library Mode</code> property in <code>Manage  > My Organization > Advanced</code>:
+
+<img src="images/ui.png" alt="stage-libs-deployed-2" width="500" style="margin-left: 60px;"/>
+
+Save changes, and after a few minutes, the <code>Stage Library Mode</code> Deployment option should appear within the Deployment UI. Set the option to <code>User Provided</code>:
+
+<img src="images/stagelibmode.png" alt="stage-libs-mode" width="600" style="margin-left: 60px;"/>
 
 
-## Technique #1: Creating a custom StreamSets Engine image with stage libraries included.
+
+## Technique #1: Create a custom StreamSets Engine image with stage libraries included.
 
 To create your own StreamSets Engine image with stage libraries included, start by cloning  this project to a linux machine and changing to the [custom-streamsets-docker-image](custom-streamsets-docker-image) dir.
 
@@ -99,22 +106,26 @@ To use your new custom image in a StreamSets Kubernetes deployment, use [Advance
 
 <img src="images/custom-image-ref.png" alt="custom-image-ref" width="600" style="margin-left: 60px;"/>
 
-Start a deployment using that new image and confirm in the deployment messages that no stage libraries needed to be downloaded:
+Start a deployment using that new image and confirm in the deployment messages that the user managed stage libs are visible to the engine:
 
-<img src="images/installed-stage-libs.png" alt="installed-stage-libs" width="800" style="margin-left: 60px;"/>
+<img src="images/sl1.png" alt="installed-stage-libs" width="800" style="margin-left: 60px;"/>
 
 
-## Technique #2: Use a Volume and an InitContainer to copy stage libs into your container at deployment time.
+## Technique #2: Mount the stage libs into your container at deployment time.
+
+The steps below provide an example of this technique in my environment. See the docs [here](https://www.ibm.com/docs/en/streamsets-controlhub?topic=deployments-user-provided-stage-library-mode#concept_fmk_qpj_2bc__title__1) for full details.
 
 
 ### Step 1: Create and populate a Volume
 
 
-First, you'll need some type of [Volume](https://kubernetes.io/docs/concepts/storage/volumes/#volume-types) populated with your desired stage libraries.  Your choice of volume type depends on which k8s distribution you are using and if it is running on-prem or in a public cloud.  For this example, I'll use an [NFS Volume](https://kubernetes.io/docs/concepts/storage/volumes/#nfs) mapped to an NFS server on a linux machine adjacent to my k8s cluster.
+First, you'll need either a Volume or a Persistent Volume populated with your desired stage libraries.  Your choice of volume type depends on which k8s distribution you are using and if it is running on-prem or in a public cloud.  For this example, I'll use an [NFS Volume](https://kubernetes.io/docs/concepts/storage/volumes/#nfs) mapped to an NFS server on a linux machine adjacent to my k8s cluster.
  
 To populate your volume, copy the [get-stage-libs.sh](stagelibs-volume/get-stagelibs.sh) script and set the StreamSets engine version and your desired set of stage libs.  You do not need to include the <code>basic</code>, <code>dataformats</code>, or <code>dev</code> stage libraries as these will be downloaded by this script by default. 
 
-For example, these are my settings in the script:
+Alternatively, one could use a Kubernetes Job to automate the stage libs downloads to populate the Volume.
+
+For example, these are my settings in the script that populates my Volume:
 
 ```
 # SDC Version
@@ -154,62 +165,34 @@ drwxr-xr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-jython_2_7-lib
 drwxr-xr-x 3 mark mark 4096 Sep 20 05:26 streamsets-datacollector-sdc-snowflake-lib
 ```
 ### Step 2: Create a StreamSets Kubernetes Deployment
-Create a StreamSets Kubernetes Deployment. There is no need to edit the image used as we want to use the default image, like <code>streamsets/datacollector:JDK17_6.3.1</code>. Make sure to configure the deployment with all of the stage libraries you will later preload. 
+Create a StreamSets Kubernetes Deployment. There is no need to edit the image used as we want to use the default image, like <code>streamsets/datacollector:JDK17_6.3.1</code>. 
 
 
-### Step 3 (Optional): Start the StreamSets Kubernetes Deployment before preloading stage libs
+### Step 3: Add the Volumes, VolumeMounts, and if needed, a PVC to the deployment manifest
 
-At this point, to understand how things work, you could start the deployment without yet preloading any stage libs.  As the deployment starts, you should see messages that indicate that the specified stage libs are being downloaded as part of the bootstrap process:
-
-<img src="images/stage-libs-deployed-1.png" alt="stage-libs-deployed-1" width="900" style="margin-left: 60px;"/>
-
-Stop the deployment which will terminate the engine.
-
-### Step 4: Add Volumes, VolumeMounts, and an InitContainer to the Deployment
-
-Edit the deployment's Advanced Mode and add sections for two Volumes - one for the Volume with the stage libs, another for an [emptyDir](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir) that will be used to store the preloaded stagelibs.  
-
-For example, my manifest has these two Volumes defined:
+Edit the deployment's Advanced Mode and add the Volume that holds the stage libs. For example, my manifest has this Volume defined:
 ```
       volumes:
-        - name: nfs-volume
+        - name: stagelibs
           nfs:
-            path: /srv/nfs/share/streamsets-datacollector-6.3.1/streamsets-libs
+            path: /srv/nfs/share/streamsets-datacollector-6.3.1
             readOnly: true
             server: 10.10.10.186
-        - emptyDir: {}
-          name: shared-lib
 ```
 
-The InitContainer is defined like this, with two volumeMounts and a command that copies the stage libs from the NFS volume to the emptyDir:
-
-```
-      initContainers:
-        - command:
-            - sh
-            - -c
-            - cp -rv /source/. /target/
-          image: busybox
-          name: copy-files
-          volumeMounts:
-            - mountPath: /source
-              name: nfs-volume
-            - mountPath: /target
-              name: shared-lib
-```
-
-Finally, the StreamSets engine container has this volumeMount that mounts the emptyDir (that now holds the stage libs) into the streamsets-libs dir:
+Next, add a VolumeMount to mount the Volume into the streamsets-libs dir:
 
           volumeMounts:
             - mountPath: /opt/streamsets-datacollector-6.3.1/streamsets-libs
-              name: shared-lib
+              name: stagelibs
 
 A full example deployment manifest example is [here](stagelibs-volume/yaml/example-deployment.yaml).
 
 
-With those changes in place, start the deployment again, and if all goes well, you will see that no stage libs needed to be downloaded:
+With those changes in place, start the deployment, and just as in the previous example, confirm that the user managed stage libs are visible to the engine:
 
-<img src="images/stage-libs-deployed-2.png" alt="stage-libs-deployed-2" width="900" style="margin-left: 60px;"/>
+<img src="images/sl1.png" alt="installed-stage-libs" width="800" style="margin-left: 60px;"/>
+
 
 
 
