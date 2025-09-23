@@ -20,7 +20,10 @@ Save changes, and after a few minutes, the <code>Stage Library Mode</code> Deplo
 
 <img src="images/stagelibmode.png" alt="stage-libs-mode" width="600" style="margin-left: 60px;"/>
 
-
+If you are creating Deployments using the [StreamSets Python SDK](https://support-streamsets-com.s3.us-west-2.amazonaws.com/streamsets-docs/platform-sdk/latest/index.html#) make sure you are using at least v6.6.1 of the SDK and set this property in the deployment's engine configuration:
+```
+deployment.engine_configuration.stage_lib_mode = 'USER_PROVIDED'
+```
 
 ## Technique #1: Create a custom StreamSets Engine image with stage libraries included.
 
